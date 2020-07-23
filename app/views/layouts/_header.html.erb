@@ -8,9 +8,12 @@
     <nav>
       <ul class="nav navbar-nav navbar-right">
         <% if logged_in? %>
-          <li><%= link_to "ホーム", user_path(current_user) %></li>
+          <li><%= link_to "トップへ", user_path(current_user) %></li>
           <% if current_user.admin? %>
             <li><%= link_to "ユーザ一覧", users_path %></li>
+            <li><%= link_to "出勤社員一覧", '#' %></li>
+            <li><%= link_to "拠点情報の修正", '#' %></li>
+            <li><%= link_to "基本情報の修正", '#' %></li>
           <% end %>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
