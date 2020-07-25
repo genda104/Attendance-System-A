@@ -10,16 +10,53 @@
 
 User.create!(name: "管理者",
              email: "admin@email.com",
+             affiliation: "管理部",
+             employee_number: 0,
+             uid: "manage1",
              password: "password",
              password_confirmation: "password",
+             designated_work_start_time: "2020-07-25 09:00:00",
+             designated_work_end_time: "2020-07-25 18:00:00",
              admin: true)
 
-60.times do |n|
+2.times do |n|
   name  = Faker::Name.name
   email = "sample-#{n+1}@email.com"
+  affiliation = "フリーランス部"
+  employee_number = "#{(n+1)*10}"
+  uid = "emp#{n+1}"
   password = "password"
+  designated_work_start_time = "2020-07-25 09:00:00"
+  designated_work_end_time = "2020-07-25 18:00:00"
+  superior = true
   User.create!(name: name,
                email: email,
+               affiliation: affiliation,
+               employee_number: employee_number,
+               uid: uid,
                password: password,
-               password_confirmation: password)
+               password_confirmation: password,
+               designated_work_start_time: designated_work_start_time,
+               designated_work_end_time: designated_work_end_time,
+               superior: superior)
+end
+
+30.times do |n|
+  name  = Faker::Name.name
+  email = "sample-#{n+3}@email.com"
+  affiliation = "フリーランス部"
+  employee_number = "#{(n+3)*10}"
+  uid = "emp#{n+3}"
+  password = "password"
+  designated_work_start_time = "2020-07-25 09:00:00"
+  designated_work_end_time = "2020-07-25 18:00:00"
+  User.create!(name: name,
+               email: email,
+               affiliation: affiliation,
+               employee_number: employee_number,
+               uid: uid,
+               password: password,
+               password_confirmation: password,
+               designated_work_start_time: designated_work_start_time,
+               designated_work_end_time: designated_work_end_time)
 end
