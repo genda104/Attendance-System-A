@@ -7,8 +7,7 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
   
   def index
-    @users = User.paginate(page: params[:page]).search(params[:search])
-    (params[:search] == nil || params[:search] == "") ? @title = "全てのユーザー" : @title = "検索結果"
+    @users = User.paginate(page: params[:page])
   end
   
   def show
