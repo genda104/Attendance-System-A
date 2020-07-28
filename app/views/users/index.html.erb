@@ -1,4 +1,6 @@
 <% provide(:title, 'All Users') %>
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '更新') %>
 <h1> ユーザ一覧 </h1>
 
 <%= form_with local: true, multipart: true do |f| %>
@@ -19,11 +21,12 @@
           <% end %>
           <div class="panel panel-default">
             <div class="panel-heading">
-              <button type="button" data-toggle="collapse" data-target="#" <%= user.id %> class="btn btn-lg btn-primary">編集</button>
+              <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg btn-primary">編集</button>
             </div>
-            <div id=<%= user.id %> class="collapse">
+            <div id="<%= user.id %>" class="collapse">
               <div class="panel-body">
-                <%= link_to "編集", edit_basic_info_user_path(user) %>
+                <% @user = user %>
+                <%= render 'edit_form' %>
               </div>
             </div>
           </div>
