@@ -3,9 +3,9 @@
 <% provide(:button_text, '更新') %>
 <h1> ユーザ一覧 </h1>
 
-<%= form_with local: true, multipart: true do |f| %>
+<%= form_with url:import_users_path, local: true, multipart: true do |f| %>
   <%= f.file_field :file %><br/>
-  <%= link_to "　　　　CSVをインポート　　　　", "#", class: "btn btn-primary" %>
+  <%= f.submit "　　　　CSVをインポート　　　　", class: "btn btn-primary" %>
 <% end %>
 
 <div class="col-md-10 col-md-offset-1">

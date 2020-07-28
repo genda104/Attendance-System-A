@@ -11,9 +11,9 @@ class User < ApplicationRecord
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: true
   validates :affiliation, length: { in: 2..30 }, allow_blank: true
-  validates :basic_work_time, presence: true
-  validates :designated_work_start_time, presence: true
-  validates :designated_work_end_time, presence: true
+  validates :basic_work_time, presence: true, allow_nil: true
+  validates :designated_work_start_time, presence: true, allow_nil: true
+  validates :designated_work_end_time, presence: true, allow_nil: true
   has_secure_password
   validates :password, presence:true, length: { minimum: 6 }, allow_nil: true
 
@@ -24,6 +24,22 @@ class User < ApplicationRecord
     else
       all   #全て表示。User.は省略
     end
+  end
+  
+  # CVSファイル読み込み機能
+  def self.import(file)     #ここでのself.はUser.を意味する
+    CSV.foreach(file.path, headers: true) do |row|
+      # emailが見つかればレコードを呼び出し、見つからなければ新しく作成
+      user = find_by(email: row["email"]) || new
+      # CSVからデータを取得し設定する
+      user.attributes = row.to_hash.slice(*updatable_attributes)
+      # 保存する
+      user.save
+    end
+  end
+  # 更新を許可するカラムを定義
+  def self.updatable_attributes
+    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
   end
   
   # 渡された文字列のハッシュ値を返します。

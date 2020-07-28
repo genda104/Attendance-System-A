@@ -57,6 +57,14 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
+  
+  def import                        # CSV file import
+    # fileはtmpに自動で一時保存される
+    if params[:file] != nil
+      User.import(params[:file])
+    end
+    redirect_to users_url
+  end
 
   private
   
