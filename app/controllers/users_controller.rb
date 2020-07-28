@@ -60,10 +60,19 @@ class UsersController < ApplicationController
   
   def import                        # CSV file import
     # fileはtmpに自動で一時保存される
-    if params[:file] != nil
-      User.import(params[:file])
+    if params[:file].present?
+      if File.extname(params[:file].original_filename) == ".csv" # File.extname とパラメーターのoriginal_filenameでチェック
+        User.import(params[:file]) 
+        flash[:success] = 'CSVファイルをインポートしました。'
+        redirect_to users_url
+      else
+        flash[:danger] = "CSVファイルに限ります。インポートできませんでした。"
+        redirect_to users_url
+      end
+    else
+      flash[:danger] = "ファイルを選択してください。"
+      redirect_to users_url
     end
-    redirect_to users_url
   end
 
   private
