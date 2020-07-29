@@ -41,7 +41,7 @@ User.create!(name: "管理者",
                superior: superior)
 end
 
-30.times do |n|
+3.times do |n|
   name  = Faker::Name.name
   email = "sample-#{n+3}@email.com"
   affiliation = "フリーランス部"

@@ -46,9 +46,6 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
-  def edit_basic_info
-  end
-
   def update_basic_info
     if @user.update_attributes(basic_info_params)
       flash[:success] = "#{@user.name}の基本情報を更新しました。"
@@ -58,13 +55,28 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
-  def import                        # CSV file import
-    # fileはtmpに自動で一時保存される
+  def import                  # CSV file import
     if params[:file].present?
       if File.extname(params[:file].original_filename) == ".csv" # File.extname とパラメーターのoriginal_filenameでチェック
-        User.import(params[:file]) 
-        flash[:success] = 'CSVファイルをインポートしました。'
-        redirect_to users_url
+        ActiveRecord::Base.transaction do       # トランザクションを開始します。
+          begin
+#            User.import(params[:file]) 
+            CSV.foreach(params[:file].path, headers: true) do |row|              # headers: trueで1行目をヘッダとして無視
+              # テーブルに同じemailが見つかればレコードを呼び出し、見つからなければ新しく作成　(emailフィールドはunique)
+              user = User.find_by(email: row["email"]) || new
+              # CSVからデータを取得し設定する
+              user.attributes = row.to_hash.slice(*updatable_attributes)
+              # 保存する
+              user.save!
+            end
+            flash[:success] = 'CSVファイルをインポートしました。'
+            redirect_to users_url
+            return
+          rescue ActiveRecord::RecordInvalid        # トランザクションによる例外発生で更新を無効にする。
+            flash[:danger] = "無効な入力データがあった為、以降のインポートをキャンセルしました。"
+            redirect_to users_url
+          end
+        end
       else
         flash[:danger] = "CSVファイルに限ります。インポートできませんでした。"
         redirect_to users_url
@@ -81,10 +93,11 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :password_confirmation)
     end
     
-    def basic_info_params
-      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
+   # 更新を許可するカラムを定義　CSV file import
+    def updatable_attributes
+      ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
     end
-    
+  
     # beforeフィルター
 
     # アクセスしたユーザーが現在ログインしているユーザーか、またはシステム管理者権限所有か確認します。

@@ -17,30 +17,21 @@ class User < ApplicationRecord
   has_secure_password
   validates :password, presence:true, length: { minimum: 6 }, allow_nil: true
 
-  # ユーザー検索機能
-  def self.search(search)   #ここでのself.はUser.を意味する
-    if search
-      where(['name LIKE ?', "%#{search}%"])   #検索とnameの部分一致を表示。User.は省略
-    else
-      all   #全て表示。User.は省略
-    end
-  end
-  
-  # CVSファイル読み込み機能
-  def self.import(file)     #ここでのself.はUser.を意味する
-    CSV.foreach(file.path, headers: true) do |row|
-      # emailが見つかればレコードを呼び出し、見つからなければ新しく作成
-      user = find_by(email: row["email"]) || new
+  # CVSファイル一行ずつ読み込み機能
+#  def self.import(file)     #ここでのself.はUser.を意味する
+#    CSV.foreach(file.path, headers: true) do |row|              # headers: trueで1行目をヘッダとして無視
+      # テーブルに同じemailが見つかればレコードを呼び出し、見つからなければ新しく作成　(emailフィールドはunique)
+#      user = find_by(email: row["email"]) || new
       # CSVからデータを取得し設定する
-      user.attributes = row.to_hash.slice(*updatable_attributes)
+#      user.attributes = row.to_hash.slice(*updatable_attributes)
       # 保存する
-      user.save
-    end
-  end
+#      user.save!
+#    end
+#  end
   # 更新を許可するカラムを定義
-  def self.updatable_attributes
-    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
-  end
+#  def self.updatable_attributes
+#    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
+#  end
   
   # 渡された文字列のハッシュ値を返します。
   def User.digest(string)
