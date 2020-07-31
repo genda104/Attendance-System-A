@@ -55,6 +55,23 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
+  def working_index           # 出勤中社員一覧
+    @working_users = []
+    temps = []
+    @users = User.all.includes(:attendances)
+    @users.each do |user|
+      if user.attendances.any?{|day|
+          ( day.worked_on == Date.today &&
+            day.started_at.present? && day.finished_at.blank? )
+            }
+        temps << user.employee_number          # 条件に合った社員番号を配列変数tempsに格納
+      end
+    end
+    temps.each do |temp|
+      @working_users << User.find_by(employee_number: temp)     # 配列変数tempsでユーザーテーブルを検索し@working_usersに格納
+    end
+  end
+  
   def import                  # CSV file import
     if params[:file].present?
       if File.extname(params[:file].original_filename) == ".csv" # File.extname とパラメーターのoriginal_filenameでチェック

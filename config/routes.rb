@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     end
     collection do
       post :import
+      get :working_index
     end
     resources :attendances, only: :update
   end
