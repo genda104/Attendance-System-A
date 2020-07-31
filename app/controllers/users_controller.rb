@@ -61,7 +61,7 @@ class UsersController < ApplicationController
     @users = User.all.includes(:attendances)
     @users.each do |user|
       if user.attendances.any?{|day|
-          ( day.worked_on == Date.today &&
+          ( day.worked_on == Date.current &&
             day.started_at.present? && day.finished_at.blank? )
             }
         temps << user.employee_number          # 条件に合った社員番号を配列変数tempsに格納
@@ -108,6 +108,10 @@ class UsersController < ApplicationController
   
     def user_params
       params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :password_confirmation)
+    end
+    
+    def basic_info_params
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
    # 更新を許可するカラムを定義　CSV file import

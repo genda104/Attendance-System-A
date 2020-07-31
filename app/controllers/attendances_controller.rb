@@ -27,6 +27,14 @@ class AttendancesController < ApplicationController
   end
   
   def edit_one_month
+    respond_to do |format|
+      format.html do
+                                                                                      # html用の処理を書く
+      end
+      format.csv do
+        send_data render_to_string, filename: "当月分勤怠データ.csv", type: :csv      # csv用の処理を書く
+      end
+    end
   end
   
   def update_one_month
