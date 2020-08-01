@@ -1,24 +1,28 @@
 require 'csv'
 
 CSV.generate do |csv|
-  column_names = %w(日付 出社 退社 備考)
+  column_names = %w(日付 出社 退社 在社時間 備考)
   csv << column_names               #表のカラム名
-  @attendances.each do |f|
-    if (f.started_at == nil)
+  @attendances.each do |day|
+    if (day.started_at == nil)
       started_at = ""
     else
-      started_at = f.started_at.strftime("%H:%M")
+      started_at = day.started_at.strftime("%H:%M")
     end
-    if (f.finished_at == nil)
+    if (day.finished_at == nil)
       finished_at = ""
     else
-      finished_at = f.finished_at.strftime("%H:%M")
+      finished_at = day.finished_at.strftime("%H:%M")
+    end
+    if day.started_at.present? && day.finished_at.present?
+      temp_working_times = working_times(day.started_at, day.finished_at)
     end
     column_values = [
-      f.worked_on.strftime("%m/%d"),
+      day.worked_on.strftime("%m/%d"),
       started_at,
       finished_at,
-      f.note
+      temp_working_times,
+      day.note
     ]
     csv << column_values            #表のカラム値
   end
