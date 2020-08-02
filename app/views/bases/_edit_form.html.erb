@@ -1,0 +1,14 @@
+<%= form_with(model: @base, local: true, method: :post) do |f| %>
+  <%= render 'shared/error_messages', object: @base %>
+
+  <%= f.label :base_id, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :base_id, class: "form-control" %>
+
+  <%= f.label :name, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :name, class: "form-control" %>
+
+  <%= f.label :attendance, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :attendance, class: "form-control" %>
+
+  <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+<% end %>
