@@ -1,4 +1,6 @@
 <% provide(:title, 'Bases') %>
+<% provide(:class_text, 'base') %>
+<% provide(:button_text, '作成する') %>
 <h1> 拠点一覧 </h1>
 
 <div class="col-md-10 col-md-offset-1">
@@ -14,31 +16,31 @@
     </thead>
     
     <tbody>
-      <% provide(:class_text, 'base') %>
-      <% provide(:button_text, '作成する') %>
-      <% @bases.each do |base| %>
-      <tr>
-        <td>
-          <button type="button" data-toggle="collapse" data-target="#<%= base.base_id %>" class="btn btn-primary">修正</button>
-        </td>
-        <td>
-          <%= link_to "削除", base, method: :delete,
-              data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
-        </td>
-        <td class="center"><%= base.base_id %></td>
-        <td class="center"><%= base.name %></td>
-        <td class="center"><%= base.attendance %></td>
-      </tr>
-      <tr>
-        <td>
-          <div id="<%= base.base_id %>" class="collapse">
-            <div class="panel-body">
-              <% @base = base %>
-              <%= render 'edit_form' %>
+      <% if @bases != nil %>
+        <% @bases.each do |base| %>
+        <tr>
+          <td>
+            <button type="button" data-toggle="collapse" data-target="#<%= base.base_id %>" class="btn btn-primary">修正</button>
+          </td>
+          <td>
+            <%= link_to "削除", base, method: :delete,
+                data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+          </td>
+          <td class="center"><%= base.base_id %></td>
+          <td class="center"><%= base.name %></td>
+          <td class="center"><%= base.attendance %></td>
+        </tr>
+        <tr>
+          <td>
+            <div id="<%= base.base_id %>" class="collapse">
+              <div class="panel-body">
+                <% @base = base %>
+                <%= render 'edit_form' %>
+              </div>
             </div>
-          </div>
-        </td>
-      </tr>
+          </td>
+        </tr>
+        <% end %>
       <% end %>
     </tbody>
   </table>
@@ -51,7 +53,7 @@
         </div>
         <div id="add_base" class="collapse">
           <div class="panel-body">
-            <%= render 'edit_form' %>
+            <%= render 'new_form' %>
           </div>
         </div>
       </div>
