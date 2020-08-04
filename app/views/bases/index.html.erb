@@ -1,6 +1,7 @@
 <% provide(:title, 'Bases') %>
 <% provide(:class_text, 'base') %>
 <% provide(:button_text, '作成する') %>
+<!-- %=render 'shared/error_messages', object: @base %> -->
 <h1> 拠点一覧 </h1>
 
 <div class="col-md-10 col-md-offset-1">
@@ -35,7 +36,7 @@
             <div id="<%= base.base_id %>" class="collapse">
               <div class="panel-body">
                 <% @base = base %>
-                <%= render 'edit_form' %>
+                <%= render partial: 'edit_form', locals: { base: @base } %>
               </div>
             </div>
           </td>
@@ -53,7 +54,7 @@
         </div>
         <div id="add_base" class="collapse">
           <div class="panel-body">
-            <%= render 'new_form' %>
+            <%= render partial: 'new_form', locals: { base: @base } %>
           </div>
         </div>
       </div>
