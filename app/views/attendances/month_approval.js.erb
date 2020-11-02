@@ -1,0 +1,4 @@
+<!-- 呼び出し元 show.html.erbファイルの id="month_approval" と関連付けされる -->
+<!-- render 'month_approval' によって _month_approval.html.erbパーシャルファイルを読みに行く -->
+$("#month_approval").html("<%= escape_javascript(render 'month_approval') %>");
+$("#month_approval").modal("show");

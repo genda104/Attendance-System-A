@@ -7,6 +7,10 @@ Rails.application.routes.draw do
   get    '/login', to: 'sessions#new'
   post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
+
+  #承認機能
+  #get 'attendance_approval'
+  #get 'overtime_approval'
   
   resources :users do
     member do
@@ -14,6 +18,7 @@ Rails.application.routes.draw do
       patch 'update_basic_info'
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
+      get 'attendances/month_approval'
     end
     collection do
       post :import
