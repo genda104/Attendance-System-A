@@ -19,6 +19,8 @@ Rails.application.routes.draw do
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
       get 'attendances/month_approval'
+      get 'attendances/attendance_approval'
+      get 'attendances/overtime_approval'
     end
     collection do
       post :import

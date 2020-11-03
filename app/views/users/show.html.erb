@@ -26,9 +26,9 @@
 
 <div class="btn-users-show">
 <% if (current_user.superior == true ) %>
-    <%= link_to "【所属長承認申請のお知らせ】", attendances_month_approval_user_path(@user), remote:true %><br/>
-    <%= link_to "【勤怠変更申請のお知らせ】", '#', class: "btn btn-default" %><br/>
-    <%= link_to "【残業申請のお知らせ】", '#', class: "btn btn-default" %><br/>
+    <%= link_to "【所属長承認申請のお知らせ】", attendances_month_approval_user_path(@user), remote:true, class: "btn" %><br/>
+    <%= link_to "【勤怠変更申請のお知らせ】", attendances_attendance_approval_user_path(@user), remote:true, class: "btn" %><br/>
+    <%= link_to "【残業申請のお知らせ】", attendances_overtime_approval_user_path(@user), remote:true, class: "btn" %><br/>
 <% end %>
   <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
   <%= link_to "CSV出力", attendances_edit_one_month_user_path(date: @first_day, format: :csv) , class: "btn btn-primary" %><br/>
@@ -126,3 +126,7 @@
 <!-- モーダルウィンドウ表示 -->
 <!-- id="month_approval" が month_approval.js.erbファイルと関連付けされる -->
 <div id="month_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!-- id="attendance_approval" が attendance_approval.js.erbファイルと関連付けされる -->
+<div id="attendance_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!-- id="overtime_approval" が overtime_approval.js.erbファイルと関連付けされる -->
+<div id="overtime_approval" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

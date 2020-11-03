@@ -58,6 +58,12 @@ class AttendancesController < ApplicationController
   def month_approval
   end
 
+  def attendance_approval
+  end
+
+  def overtime_approval
+  end
+
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params

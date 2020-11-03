@@ -1,0 +1,4 @@
+<!-- 呼び出し元 show.html.erbファイルの id="attendance_approval" と関連付けされる -->
+<!-- render 'attendance_approval' によって _attendance_approval.html.erbパーシャルファイルを読みに行く -->
+$("#attendance_approval").html("<%= escape_javascript(render 'attendance_approval') %>");
+$("#attendance_approval").modal("show");
