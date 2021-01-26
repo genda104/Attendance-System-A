@@ -20,12 +20,8 @@ ActiveRecord::Schema.define(version: 20210107135703) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "scheduled_end_time"
-    t.boolean "overwork_next_day"
-    t.string "work_details"
-    t.string "overwork_request_status"
-    t.string "overwork_superior_confirmation"
-    t.boolean "change"
+    t.string "monthly_status"
+    t.string "monthly_superior_confirmation"
     t.datetime "edit_started_at"
     t.datetime "edit_finished_at"
     t.datetime "before_started_at"
@@ -34,8 +30,12 @@ ActiveRecord::Schema.define(version: 20210107135703) do
     t.string "edit_status"
     t.string "edit_superior_confirmation"
     t.date "approval_date"
-    t.string "monthly_status"
-    t.string "monthly_superior_confirmation"
+    t.datetime "scheduled_end_time"
+    t.boolean "overwork_next_day"
+    t.string "work_details"
+    t.string "overwork_request_status"
+    t.string "overwork_superior_confirmation"
+    t.boolean "change"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(version: 20210107135703) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.datetime "basic_work_time", default: "2021-01-19 23:00:00"
+    t.datetime "basic_work_time", default: "2021-01-26 23:00:00"
     t.integer "employee_number"
     t.string "uid"
     t.datetime "designated_work_start_time"
