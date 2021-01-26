@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get    '/login', to: 'sessions#new'
   post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
-  
+
   resources :users do
     member do
       get 'edit_basic_info'                       # 基本情報編集
@@ -41,6 +41,5 @@ Rails.application.routes.draw do
   resources :hubs
   # システムの基本情報
   get '/system', to: 'static_pages#system'
-
 
 end
