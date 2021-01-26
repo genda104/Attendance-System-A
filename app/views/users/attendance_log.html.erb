@@ -1,0 +1,39 @@
+<% provide(:class_text, 'attendance_log') %>
+
+<h1>勤怠ログ</h1>
+
+<div>
+  <%= form_with(url: attendance_log_user_path(@user), local: true, method: :get) do |f| %>
+    <%= submit_tag '検索' %><br>
+    <%= f.date_select :select_year, {:discard_month => true}, class: "form_select" %><br>
+    <%= f.date_select :select_month, {:discard_day => true, :discard_year => true, :use_month_numbers => true}, class: "form_select" %>
+ <% end %>
+</div>
+<div>
+  <table class="table table-bordered table-striped table-status">
+    <thead>
+      <tr>
+        <th class="center">日付</th>
+        <th class="center">変更前出社時間</th>
+        <th class="center">変更前退社時間</th>
+        <th class="center">変更後出社時間</th>
+        <th class="center">変更後退社時間</th>
+        <th class="center">指示者</th>
+        <th class="center">承認日</th>
+      </tr>
+    </thead>
+    <% @attendances.each do |att| %>
+      <tbody>
+        <tr>
+          <td class="center"><%= att.worked_on if att.worked_on.present? %></td>
+          <td class="center"><%= l(att.before_started_at, format: :time) if att.before_started_at.present? %></td>
+          <td class="center"><%= l(att.before_finished_at, format: :time) if att.before_finished_at.present? %></td>
+          <td class="center"><%= l(att.started_at, format: :time) if att.started_at.present? %></td>
+          <td class="center"><%= l(att.finished_at, format: :time) if att.finished_at.present? %></td>
+          <td class="center"><%= att.edit_superior_confirmation %></td>
+          <td class="center"><%= l(att.approval_date, format: :original) if att.approval_date.present? %></td>
+        </tr>
+      </tbody>
+    <% end %>
+  </table>
+</div>

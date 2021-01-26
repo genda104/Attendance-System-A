@@ -42,7 +42,7 @@ h2 {
   margin-bottom: 30px;
   text-align: center;
   font-weight: normal;
-  color: #777;
+  color: rgb(0, 0, 0);
 }
 
 p {
@@ -67,6 +67,12 @@ p {
 #logo:hover {
   color: #fff;
   text-decoration: none;
+}
+
+/*  */
+
+.approval_message {
+  color: red;
 }
 
 /* debug */

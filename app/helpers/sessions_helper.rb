@@ -5,16 +5,16 @@ module SessionsHelper
     session[:user_id] = user.id
   end
   
-  # 永続的セッションを記憶します（Userモデルを参照）
+  # 永続的セッションを記憶します。
   def remember(user)
-    user.remember
+    user.remember             # Userモデルを参照
     cookies.permanent.signed[:user_id] = user.id
     cookies.permanent[:remember_token] = user.remember_token
   end
 
-  # 永続的セッションを破棄します
+  # 永続的セッションを破棄します。
   def forget(user)
-    user.forget         # Userモデル参照
+    user.forget               # Userモデルを参照
     cookies.delete(:user_id)
     cookies.delete(:remember_token)
   end

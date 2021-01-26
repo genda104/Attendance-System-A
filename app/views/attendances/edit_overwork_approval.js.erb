@@ -1,0 +1,4 @@
+<!-- 呼び出し元 show.html.erbファイルの id="edit-overwork-approval" と関連付けされる -->
+<!-- render 'edit_overwork_approval' によって _edit_overwork_approval.html.erbパーシャルファイルを読みに行く -->
+$("#edit-overwork-approval").html("<%= escape_javascript(render 'edit_overwork_approval') %>");
+$("#edit-overwork-approval").modal("show");

@@ -21,7 +21,7 @@ User.create!(name: "管理者",
 
 2.times do |n|
   name  = Faker::Name.name
-  email = "sample-#{n+1}@email.com"
+  email = "superior#{n+1}@email.com"
   affiliation = "フリーランス部"
   employee_number = "#{(n+1)*10}"
   uid = "emp#{n+1}"
@@ -41,9 +41,9 @@ User.create!(name: "管理者",
                superior: superior)
 end
 
-3.times do |n|
+2.times do |n|
   name  = Faker::Name.name
-  email = "sample-#{n+3}@email.com"
+  email = "sample#{n+1}@email.com"
   affiliation = "フリーランス部"
   employee_number = "#{(n+3)*10}"
   uid = "emp#{n+3}"

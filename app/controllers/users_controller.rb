@@ -10,8 +10,16 @@ class UsersController < ApplicationController
     @users = User.all
   end
   
+  # 勤怠ページ
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
+
+    @superiors = User.where(superior: true).where.not(id: @user.id)
+    @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
+    @monthly_notices = Attendance.where(monthly_status: "申請中", monthly_superior_confirmation: @user.name).count
+    @attendance_notices = Attendance.where(edit_status: "申請中", edit_superior_confirmation: @user.name).count
+    @overwork_notices = Attendance.where(overwork_request_status: "申請中", overwork_superior_confirmation: @user.name).count
+
   end
   
   def new
@@ -54,8 +62,9 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
-  
-  def working_index           # 出勤中社員一覧
+
+  # 出社中社員一覧  
+  def working_index
     @working_users = []
     temps = []
     @users = User.all.includes(:attendances)
@@ -71,15 +80,16 @@ class UsersController < ApplicationController
       @working_users << User.find_by(employee_number: temp)     # 配列変数tempsでユーザーテーブルを検索し@working_usersに格納
     end
   end
-  
-  def import                  # CSV file import
+
+  # CSV file import  
+  def import
     if params[:file].present?
       if File.extname(params[:file].original_filename) == ".csv" # File.extname とパラメーターのoriginal_filenameでチェック
         ActiveRecord::Base.transaction do       # トランザクションを開始します。
           begin
 #            User.import(params[:file]) 
             CSV.foreach(params[:file].path, headers: true) do |row|              # headers: trueで1行目をヘッダとして無視
-              # テーブルに同じemailが見つかればレコードを呼び出し、見つからなければ新しく作成　(emailフィールドはunique)
+              # テーブルに同じemailが見つかればレコードを呼び出し、見つからなければ新しく作成 (emailフィールドはunique)
               user = User.find_by(email: row["email"]) || new
               # CSVからデータを取得し設定する
               user.attributes = row.to_hash.slice(*updatable_attributes)
@@ -104,6 +114,45 @@ class UsersController < ApplicationController
     end
   end
 
+  # 勤怠ログ
+  def attendance_log
+    @user = User.find(params[:id])
+    if params["select_year(1i)"].present? && params["select_month(2i)"].present? && params["select_month(3i)"].present?
+      search_day = params["select_year(1i)"] + "-" +
+        format("%02d", params["select_month(2i)"]) + "-" +
+        format("%02d", params["select_month(3i)"])
+      @first_day = search_day.to_date.beginning_of_month
+    else
+      @first_day = Date.today.to_date.beginning_of_month
+    end
+    @last_day = @first_day.end_of_month
+    @attendances = @user.attendances.where(edit_status: "承認", worked_on: @first_day..@last_day).order(worked_on: "ASC")
+  end
+  
+  # （各お知らせモーダル内）勤怠確認ボタン
+  def confirm_one_month
+    attendance = Attendance.find(params[:attendance_id])
+    @user = User.find(attendance.user_id)
+    @first_day = attendance.worked_on.to_date.beginning_of_month
+    @last_day = @first_day.end_of_month
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    @worked_sum = @attendances.where.not(started_at: nil).count
+  end
+  
+  # 所属長承認 申請ボタン
+  def monthly_approval_request
+    @user = User.find(params[:id])
+    @attendance = @user.attendances.find_by(worked_on: params[:user][:first_day])
+    if params[:user][:monthly_superior_confirmation].present?
+      @attendance.monthly_status = "申請中"
+      @attendance.update_attributes(monthly_approval_params)
+      flash[:success] = "1ヶ月の勤怠を申請しました。"
+    else
+      flash[:danger] = "所属長を選択して下さい。"
+    end
+    redirect_to @user
+  end
+
   private
   
     def user_params
@@ -114,7 +163,11 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password, :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
-   # 更新を許可するカラムを定義　CSV file import
+    def monthly_approval_params
+      params.require(:user).permit(:monthly_superior_confirmation)
+    end
+    
+  # 更新を許可するカラムを定義 CSV file import
     def updatable_attributes
       ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
     end
