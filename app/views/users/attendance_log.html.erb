@@ -26,8 +26,20 @@
       <tbody>
         <tr>
           <td class="center"><%= att.worked_on if att.worked_on.present? %></td>
-          <td class="center"><%= l(att.before_started_at, format: :time) if att.before_started_at.present? %></td>
-          <td class="center"><%= l(att.before_finished_at, format: :time) if att.before_finished_at.present? %></td>
+          <td class="center">
+            <% if att.before_started_at.present? %>
+              <% if att.before_started_at != att.started_at %>
+                <%= l(att.before_started_at, format: :time) %>
+              <% end %>
+            <% end %>
+          </td>
+          <td class="center">
+            <% if att.before_finished_at.present? %>
+              <% if att.before_finished_at != att.finished_at %>
+                <%= l(att.before_finished_at, format: :time) %>
+              <% end %>
+            <% end %>
+          </td>
           <td class="center"><%= l(att.started_at, format: :time) if att.started_at.present? %></td>
           <td class="center"><%= l(att.finished_at, format: :time) if att.finished_at.present? %></td>
           <td class="center"><%= att.edit_superior_confirmation %></td>

@@ -16,7 +16,7 @@
       <td>所属：<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前：<%= @user.name %></td>
       <td>コード</td>
-      <td></td>
+      <td><%= @user.employee_number %></td>
       <td>出勤日数：<%= @worked_sum %>日</td>
       <td>締め：<%= l(@last_day, format: :short) %></td>
     </tr>
@@ -89,11 +89,11 @@
           <td><%= day.work_details %></td>
           <td>
             <% if day.overwork_request_status == "申請中" %>
-              <%= day.overwork_superior_confirmation %>へ残業<%= day.overwork_request_status %><%= "　" %>
+              <%= day.overwork_superior_confirmation %>へ残業<%= day.overwork_request_status %><%= " " %>
             <% elsif day.overwork_request_status == "承認" %>
               残業承認済<%= " " %>
             <% elsif day.overwork_request_status == "否認"%>
-              残業否認済<%= " " %>
+              残業否認<%= " " %>
             <% end %>
 
             <% if day.edit_status == "申請中" %>
@@ -101,7 +101,7 @@
             <% elsif day.edit_status == "承認" %>
               勤怠変更承認済
             <% elsif day.edit_status == "否認" %>
-              勤怠変更否認済       
+              勤怠変更否認       
             <% end %>
           </td>
         </tr>

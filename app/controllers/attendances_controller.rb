@@ -124,16 +124,18 @@ class AttendancesController < ApplicationController
             end
             attendance.edit_started_at = attendance.started_at
             attendance.edit_finished_at = attendance.finished_at
-            attendance.edit_superior_confirmation = nil
             item[:change] = "0"
             item[:approval_date] = Date.current
             attendance.update_attributes!(item)
           elsif item[:edit_status] == "否認"
             approval_count += 1
-            attendance.started_at = attendance.edit_started_at
-            attendance.finished_at = attendance.edit_finished_at
+            unless attendance.edit_started_at.blank?
+              attendance.started_at = attendance.edit_started_at
+            end
+            unless attendance.edit_finished_at.blank?
+              attendance.finished_at = attendance.edit_finished_at
+            end
             item[:change] = "0"
-            item[:approval_date] = ""
             attendance.update_attributes!(item)
           else
           end
