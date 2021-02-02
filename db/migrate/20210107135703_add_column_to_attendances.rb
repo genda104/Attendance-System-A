@@ -11,6 +11,8 @@ class AddColumnToAttendances < ActiveRecord::Migration[5.1]
     add_column :attendances, :edit_next_day, :boolean                   # 変更翌日チェック
     add_column :attendances, :before_next_day, :boolean                 # 変更前翌日チェック
     add_column :attendances, :next_day, :boolean                        # 翌日チェック
+    add_column :attendances, :previous_note, :string                    # 前の備考
+    add_column :attendances, :previous_edit_status, :string             # 前の勤怠編集の状態
     add_column :attendances, :edit_status, :string                      # 勤怠編集の状態
     add_column :attendances, :edit_superior_confirmation, :string       # 勤怠編集指示者確認
     add_column :attendances, :approval_date, :date                      # 承認日

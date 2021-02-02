@@ -43,7 +43,11 @@
                 <% end %>                
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.collection_select :edit_superior_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td>
+              <% if day.edit_status == "申請中" %>
+                <td><%= attendance.collection_select :edit_superior_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td>
+              <% else %>
+                <td><%= attendance.collection_select :edit_superior_confirmation, @superiors, :name, :name, {include_blank: true, selected: 0}, { class: "superior_class" } %></td>
+              <% end %>
             </tr>
           <% end %>
         <% end %>

@@ -180,7 +180,7 @@
           <%= form_with(model: @user, url: monthly_approval_request_user_path(@user), local: true, method: :patch) do |f| %>
             <%= f.hidden_field :first_day, :value => @first_day %>
             <!-- form.collection_select :保存先のカラム名, テーブル名, 実際にDBに保存させるカラム名, 選択肢に用いるカラム名 -->
-            <%= f.collection_select :monthly_superior_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %><br/>
+            <%= f.collection_select :monthly_superior_confirmation, @superiors, :name, :name, {include_blank: true, selected: 0}, { class: "superior_class" } %><br/>
             <%= f.submit "申請", class: "btn btn-primary btn-block" %>
           <% end %>
         </td>

@@ -95,6 +95,8 @@ class AttendancesController < ApplicationController
             attendance.update_attributes!(item)
             flash[:danger] = "申請を否認しました。"
           else
+            item[:change] = "0"
+            attendance.update_attributes!(item)
           end
         end
       end
@@ -131,6 +133,8 @@ class AttendancesController < ApplicationController
             attendance.edit_started_at = attendance.started_at
             attendance.edit_finished_at = attendance.finished_at
             attendance.edit_next_day = attendance.next_day
+            attendance.previous_note = attendance.note
+            attendance.previous_edit_status = "承認"
             item[:change] = "0"
             item[:approval_date] = Date.current
             attendance.update_attributes!(item)
@@ -143,9 +147,22 @@ class AttendancesController < ApplicationController
               attendance.finished_at = attendance.edit_finished_at
               attendance.next_day = attendance.edit_next_day
             end
+            attendance.previous_note = attendance.note
+            attendance.previous_edit_status = "否認"
             item[:change] = "0"
             attendance.update_attributes!(item)
           else
+            unless attendance.edit_started_at.blank?
+              attendance.started_at = attendance.edit_started_at
+            end
+            unless attendance.edit_finished_at.blank?
+              attendance.finished_at = attendance.edit_finished_at
+              attendance.next_day = attendance.edit_next_day
+            end
+            item[:note] = attendance.previous_note
+            item[:edit_status] = attendance.previous_edit_status
+            item[:change] = "0"
+            attendance.update_attributes!(item)
           end
         end
       end
@@ -199,6 +216,8 @@ class AttendancesController < ApplicationController
             item[:change] = "0"
             attendance.update_attributes!(item)
           else
+            item[:change] = "0"
+            attendance.update_attributes!(item)
           end
         end
       end
