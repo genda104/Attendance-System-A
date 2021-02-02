@@ -15,7 +15,7 @@ CSV.generate do |csv|
       finished_at = day.finished_at.strftime("%H:%M")
     end
     if day.started_at.present? && day.finished_at.present?
-      temp_working_times = working_times(day.started_at, day.finished_at)
+      temp_working_times = working_times(day.started_at, day.finished_at, day.next_day)
     end
     column_values = [
       day.worked_on.strftime("%m/%d"),
