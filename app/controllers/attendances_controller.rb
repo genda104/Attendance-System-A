@@ -151,7 +151,7 @@ class AttendancesController < ApplicationController
             attendance.previous_edit_status = "否認"
             item[:change] = "0"
             attendance.update_attributes!(item)
-          else
+          else                                                  # edit_status == "なし" (承認申請取消)
             unless attendance.edit_started_at.blank?
               attendance.started_at = attendance.edit_started_at
             end
