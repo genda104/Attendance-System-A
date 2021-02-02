@@ -11,27 +11,29 @@
 <div class="col-md-10 col-md-offset-1">
   <table class="table table-hover" id="table-users">
     <% @users.each do |user| %>
-      <tr>
-        <td>
-          <%= user.name %><br/>
-            ｜
-          <% if current_user.admin? && !current_user?(user) %>
-            <%= link_to "削除", user, method: :delete,
-                data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
-          <% end %>
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg btn-primary">編集</button>
-            </div>
-            <div id="<%= user.id %>" class="collapse">
-              <div class="panel-body">
-                <% @user = user %>
-                <%= render 'edit_form' %>
+      <% unless user.admin? %>
+        <tr>
+          <td>
+            <%= user.name %><br/>
+              ｜
+            <% if current_user.admin? && !current_user?(user) %>
+              <%= link_to "削除", user, method: :delete,
+                  data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+            <% end %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg btn-primary">編集</button>
+              </div>
+              <div id="<%= user.id %>" class="collapse">
+                <div class="panel-body">
+                  <% @user = user %>
+                  <%= render 'edit_form' %>
+                </div>
               </div>
             </div>
-          </div>
-        </td>
-      </tr>
+          </td>
+        </tr>
+      <% end %>
     <% end %>
   </table>
 </div>

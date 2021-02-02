@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
-  before_action :correct_or_admin_user, only: :show
+  before_action :correct_user, only: [:show, :edit, :update]
+  before_action :admin_user, only: [:index, :working_index, :destroy, :edit_basic_info, :update_basic_info]
+#  before_action :correct_or_admin_user, only: :show
   before_action :set_one_month, only: :show
   
   def index
@@ -12,6 +12,8 @@ class UsersController < ApplicationController
   
   # 勤怠ページ
   def show
+    redirect_to users_url if current_user.admin?                # 管理者の場合はユーザー一覧画面へ
+   
     @worked_sum = @attendances.where.not(started_at: nil).count
 
     @superiors = User.where(superior: true).where.not(id: @user.id)
@@ -88,7 +90,7 @@ class UsersController < ApplicationController
         ActiveRecord::Base.transaction do       # トランザクションを開始します。
           begin
 #            User.import(params[:file]) 
-            CSV.foreach(params[:file].path, headers: true) do |row|              # headers: trueで1行目をヘッダとして無視
+            CSV.foreach(params[:file].path, encoding: 'Shift_JIS:UTF-8', headers: true) do |row|              # headers: trueで1行目をヘッダとして無視
               # テーブルに同じemailが見つかればレコードを呼び出し、見つからなければ新しく作成 (emailフィールドはunique)
               user = User.find_by(email: row["email"]) || new
               # CSVからデータを取得し設定する

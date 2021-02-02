@@ -40,26 +40,28 @@ class AttendancesController < ApplicationController
   
   # １ヶ月の勤怠更新
   def update_one_month
+    superior_count = 0
     ActiveRecord::Base.transaction do                        # トランザクションを開始します。
       attendances_params.each do |id, item|
+        attendance = Attendance.find(id)
         if item[:edit_superior_confirmation].present?
-          if item[:edit_started_at].blank? || item[:edit_finished_at].blank? || item[:note].blank?
+          superior_count += 1
+          if item[:started_at].blank? || item[:finished_at].blank? || item[:note].blank?
             flash[:danger] = "出社・退社・備考が入力されていません。"
-            redirect_to attendances_edit_one_month_user_url and return
-          elsif ((item[:edit_started_at] > item[:edit_finished_at]) && (item[:next_day] == "0"))
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif ((item[:started_at] > item[:finished_at]) && (item[:next_day] == "0"))
             flash[:danger] = "出社時間より早い退社時間は無効です。"
-            redirect_to attendances_edit_one_month_user_url and return
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
           else
             item[:edit_status] = "申請中"
-            attendance = Attendance.find(id)
-            item[:edit_started_at] = attendance.worked_on.to_s + " " + item[:edit_started_at] + ":00"
-            item[:edit_finished_at] = attendance.worked_on.to_s + " " + item[:edit_finished_at] + ":00"
             attendance.update_attributes!(item)
           end
         end
       end
     end
-    flash[:success] = "勤怠変更申請を送信しました。"
+    if superior_count > 0
+      flash[:success] = "勤怠変更申請を送信しました。"
+    end
     redirect_to user_url(date: params[:date]) and return
   rescue ActiveRecord::RecordInvalid                        # トランザクションによる例外発生で更新を無効にする。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。例外発生！"
@@ -87,19 +89,15 @@ class AttendancesController < ApplicationController
             item[:change] = "0"
             attendance.update_attributes!(item)
             flash[:danger] = "申請を否認しました。"
-          elsif item[:monthly_status] == "なし"
-            item[:monthly_status] = nil
-            item[:change] = nil
-            attendance.monthly_superior_confirmation = nil
-            attendance.update_attributes!(item)
+          else
           end
         end
       end
     end
-    redirect_to @user and return
+    redirect_to @user
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
-    redirect_to @user and return
+    redirect_to @user
   end
   
   # 勤怠変更申請モーダル
@@ -110,46 +108,45 @@ class AttendancesController < ApplicationController
   
   # 勤怠変更申請モーダル更新
   def update_attendance_approval
+    approval_count = 0
     @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do
       edit_attendances_params.each do |id, item|
         if item[:change] == "1"
           attendance = Attendance.find(id)
           if item[:edit_status] == "承認"
+            approval_count += 1
             if attendance.before_started_at.blank?
               attendance.before_started_at = attendance.started_at
             end
             if attendance.before_finished_at.blank?
               attendance.before_finished_at = attendance.finished_at
             end
-            attendance.started_at = attendance.edit_started_at
-            attendance.finished_at = attendance.edit_finished_at
+            attendance.edit_started_at = attendance.started_at
+            attendance.edit_finished_at = attendance.finished_at
+            attendance.edit_superior_confirmation = nil
             item[:change] = "0"
             item[:approval_date] = Date.current
             attendance.update_attributes!(item)
-            flash[:success] = "変更を送信しました。"
           elsif item[:edit_status] == "否認"
-            item[:change] = "0"
-            attendance.update_attributes!(item)
-          elsif item[:edit_status] == "なし"
-            item[:edit_status] = ""
+            approval_count += 1
+            attendance.started_at = attendance.edit_started_at
+            attendance.finished_at = attendance.edit_finished_at
             item[:change] = "0"
             item[:approval_date] = ""
-            attendance.edit_started_at = nil
-            attendance.edit_finished_at = nil
-            attendance.note = nil
-            attendance.next_day = false
-            attendance.edit_superior_confirmation = nil
             attendance.update_attributes!(item)
           else
           end
         end
       end
     end
-    redirect_to @user and return
+    if approval_count > 0
+      flash[:success] = "勤怠変更申請の返信をしました。"
+    end
+    redirect_to @user
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
-    redirect_to @user and return
+    redirect_to @user
   end
   
   # 残業申請モーダル
@@ -181,36 +178,35 @@ class AttendancesController < ApplicationController
   
   # 残業申請お知らせモーダル更新
   def update_overwork_approval
+    approval_count = 0
     @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do
       overwork_notice_params.each do |id, item|
         if item[:change] == "1"
           attendance = Attendance.find(id)
           if item[:overwork_request_status].in?(["承認", "否認"])
+            approval_count += 1
             item[:change] = "0"
             attendance.update_attributes!(item)
-            flash[:success] = "変更を送信しました。"
-          elsif item[:overwork_request_status] == "なし"
-            item[:overwork_request_status] = nil
-            item[:change] = nil
-            attendance.scheduled_end_time = nil
-            attendance.work_details = nil
-            attendance.update_attributes!(item)
+          else
           end
         end
       end
     end
-    redirect_to @user and return
+    if approval_count > 0
+      flash[:success] = "残業申請の返信をしました。"
+    end
+    redirect_to @user
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
-    redirect_to @user and return
+    redirect_to @user
   end
 
   private
 
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:edit_started_at, :edit_finished_at, :note, :edit_superior_confirmation, :next_day])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :edit_superior_confirmation, :next_day])[:attendances]
     end
     
     # 1ヶ月の勤怠申請の更新情報

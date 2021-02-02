@@ -15,8 +15,11 @@ User.create!(name: "管理者",
              uid: "manage1",
              password: "password",
              password_confirmation: "password",
-             designated_work_start_time: "2020-07-25 09:00:00",
-             designated_work_end_time: "2020-07-25 18:00:00",
+             basic_work_time: Time.current.change(hour: 8, min: 0, sec: 0),
+             designated_work_start_time: Time.current.change(hour: 9, min: 0, sec: 0),
+             designated_work_end_time: Time.current.change(hour: 18, min: 0, sec: 0),
+#             designated_work_start_time: "2020-07-25 09:00:00",
+#             designated_work_end_time: "2020-07-25 18:00:00",
              admin: true)
 
 2.times do |n|
@@ -26,6 +29,7 @@ User.create!(name: "管理者",
   employee_number = "#{(n+1)*10}"
   uid = "emp#{n+1}"
   password = "password"
+  basic_work_time = Time.current.change(hour: 8, min: 0, sec: 0)
   designated_work_start_time = "2020-07-25 09:00:00"
   designated_work_end_time = "2020-07-25 18:00:00"
   superior = true
@@ -36,6 +40,7 @@ User.create!(name: "管理者",
                uid: uid,
                password: password,
                password_confirmation: password,
+               basic_work_time: basic_work_time,
                designated_work_start_time: designated_work_start_time,
                designated_work_end_time: designated_work_end_time,
                superior: superior)
@@ -48,6 +53,7 @@ end
   employee_number = "#{(n+3)*10}"
   uid = "emp#{n+3}"
   password = "password"
+  basic_work_time = Time.current.change(hour: 8, min: 0, sec: 0)
   designated_work_start_time = "2020-07-25 09:00:00"
   designated_work_end_time = "2020-07-25 18:00:00"
   User.create!(name: name,
@@ -57,6 +63,7 @@ end
                uid: uid,
                password: password,
                password_confirmation: password,
+               basic_work_time: basic_work_time,
                designated_work_start_time: designated_work_start_time,
                designated_work_end_time: designated_work_end_time)
 end
