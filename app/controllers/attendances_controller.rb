@@ -50,7 +50,7 @@ class AttendancesController < ApplicationController
             if item[:started_at].blank? && (attendance.worked_on == Date.today)
               flash[:danger] = "出社が入力されていません。"
               redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-            elsif item[:finished_at].blank? && (attendance.worked_on == Date.today)
+            elsif item[:finished_at].blank? && (attendance.worked_on == Date.today)           # 当日は退社なしでも可
             else
               flash[:danger] = "出社・退社が入力されていません。"
               redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
@@ -126,9 +126,11 @@ class AttendancesController < ApplicationController
             end
             if attendance.before_finished_at.blank?
               attendance.before_finished_at = attendance.finished_at
+              attendance.before_next_day = attendance.next_day
             end
             attendance.edit_started_at = attendance.started_at
             attendance.edit_finished_at = attendance.finished_at
+            attendance.edit_next_day = attendance.next_day
             item[:change] = "0"
             item[:approval_date] = Date.current
             attendance.update_attributes!(item)
@@ -139,6 +141,7 @@ class AttendancesController < ApplicationController
             end
             unless attendance.edit_finished_at.blank?
               attendance.finished_at = attendance.edit_finished_at
+              attendance.next_day = attendance.edit_next_day
             end
             item[:change] = "0"
             attendance.update_attributes!(item)
