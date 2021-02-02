@@ -46,16 +46,21 @@ class AttendancesController < ApplicationController
         attendance = Attendance.find(id)
         if item[:edit_superior_confirmation].present?
           superior_count += 1
-          if item[:started_at].blank? || item[:finished_at].blank? || item[:note].blank?
-            flash[:danger] = "出社・退社・備考が入力されていません。"
-            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          if item[:started_at].blank? || item[:finished_at].blank?
+            if item[:started_at].blank? && (attendance.worked_on == Date.today)
+              flash[:danger] = "出社が入力されていません。"
+              redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+            elsif item[:finished_at].blank? && (attendance.worked_on == Date.today)
+            else
+              flash[:danger] = "出社・退社が入力されていません。"
+              redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+            end
           elsif ((item[:started_at] > item[:finished_at]) && (item[:next_day] == "0"))
             flash[:danger] = "出社時間より早い退社時間は無効です。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          else
-            item[:edit_status] = "申請中"
-            attendance.update_attributes!(item)
           end
+          item[:edit_status] = "申請中"
+          attendance.update_attributes!(item)
         end
       end
     end
