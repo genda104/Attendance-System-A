@@ -34,17 +34,20 @@ CSV.generate do |csv|
       if day.started_at.present? && day.finished_at.present?
         temp_working_times = working_times(day.started_at, day.finished_at, day.next_day)
       end
+      note = day.note
     else  
       if day.edit_started_at.present? && day.edit_finished_at.present?
         temp_working_times = working_times(day.edit_started_at, day.edit_finished_at, day.edit_next_day)
       end
+      note = day.previous_note
     end
+
     column_values = [
       day.worked_on.strftime("%m/%d"),
       started_at,
       finished_at,
       temp_working_times,
-      day.note
+      note
     ]
     csv << column_values            #表のカラム値
   end
