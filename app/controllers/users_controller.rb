@@ -20,7 +20,7 @@ class UsersController < ApplicationController
     @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
     @monthly_notices = Attendance.where(monthly_status: "申請中", monthly_superior_confirmation: @user.name).count
     @attendance_notices = Attendance.where(edit_status: "申請中", edit_superior_confirmation: @user.name).count
-    @overwork_notices = Attendance.where(overwork_request_status: "申請中", overwork_superior_confirmation: @user.name).count
+    @overwork_notices = Attendance.where(overwork_status: "申請中", overwork_superior_confirmation: @user.name).count
 
   end
   

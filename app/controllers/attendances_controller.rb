@@ -94,7 +94,7 @@ class AttendancesController < ApplicationController
             item[:change] = "0"
             attendance.update_attributes!(item)
             flash[:danger] = "申請を否認しました。"
-          else
+          else                                  # monthly_status == "なし" (承認申請取消)
             item[:change] = "0"
             attendance.update_attributes!(item)
           end
@@ -190,7 +190,7 @@ class AttendancesController < ApplicationController
     if params[:attendance][:work_details].blank? || params[:attendance][:overwork_superior_confirmation].blank?
       flash[:danger] = "未入力の項目があります。"
     else
-      @attendance.overwork_request_status = "申請中"
+      @attendance.overwork_status = "申請中"
       @attendance.update_attributes(overwork_params)
       flash[:success] = "残業を申請しました。"
     end
@@ -200,7 +200,7 @@ class AttendancesController < ApplicationController
   # 残業申請お知らせモーダル
   def edit_overwork_approval
     @user = User.find(params[:user_id])
-    @attendances = Attendance.where(overwork_request_status: "申請中", overwork_superior_confirmation: @user.name).order(user_id: "ASC", worked_on: "ASC").group_by(&:user_id)
+    @attendances = Attendance.where(overwork_status: "申請中", overwork_superior_confirmation: @user.name).order(user_id: "ASC", worked_on: "ASC").group_by(&:user_id)
   end
   
   # 残業申請お知らせモーダル更新
@@ -211,11 +211,23 @@ class AttendancesController < ApplicationController
       overwork_notice_params.each do |id, item|
         if item[:change] == "1"
           attendance = Attendance.find(id)
-          if item[:overwork_request_status].in?(["承認", "否認"])
+          if item[:overwork_status].in?(["承認", "否認"])
             approval_count += 1
+            attendance.previous_scheduled_end_time = attendance.scheduled_end_time
+            attendance.previous_overwork_next_day = attendance.overwork_next_day
+            attendance.previous_work_details = attendance.work_details
+            if item[:overwork_status] == "承認"
+              attendance.previous_overwork_status = "承認"
+            else
+              attendance.previous_overwork_status = "否認"
+            end
             item[:change] = "0"
             attendance.update_attributes!(item)
-          else
+          else                                  # overwork_status == "なし" (承認申請取消)
+            attendance.scheduled_end_time = attendance.previous_scheduled_end_time
+            attendance.overwork_next_day = attendance.previous_overwork_next_day
+            attendance.work_details = attendance.previous_work_details
+            item[:overwork_status] = attendance.previous_overwork_status
             item[:change] = "0"
             attendance.update_attributes!(item)
           end
@@ -255,7 +267,7 @@ class AttendancesController < ApplicationController
     
     # 残業申請お知らせの更新情報
     def overwork_notice_params
-      params.require(:user).permit(attendances: [:overwork_request_status, :change])[:attendances]
+      params.require(:user).permit(attendances: [:overwork_status, :change])[:attendances]
     end
 
     # beforeフィルター

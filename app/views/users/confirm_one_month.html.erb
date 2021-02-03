@@ -88,11 +88,11 @@
           <td><%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overwork_next_day) if day.scheduled_end_time.present? %></td>
           <td><%= day.work_details %></td>
           <td>
-            <% if day.overwork_request_status == "申請中" %>
-              <%= day.overwork_superior_confirmation %>へ残業<%= day.overwork_request_status %><%= " " %>
-            <% elsif day.overwork_request_status == "承認" %>
+            <% if day.overwork_status == "申請中" %>
+              <%= day.overwork_superior_confirmation %>へ残業<%= day.overwork_status %><%= " " %>
+            <% elsif day.overwork_status == "承認" %>
               残業承認済<%= " " %>
-            <% elsif day.overwork_request_status == "否認"%>
+            <% elsif day.overwork_status == "否認"%>
               残業否認<%= " " %>
             <% end %>
 

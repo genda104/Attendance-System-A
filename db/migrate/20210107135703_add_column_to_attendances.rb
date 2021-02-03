@@ -17,11 +17,16 @@ class AddColumnToAttendances < ActiveRecord::Migration[5.1]
     add_column :attendances, :edit_superior_confirmation, :string       # 勤怠編集指示者確認
     add_column :attendances, :approval_date, :date                      # 承認日
     # 残業申請
+    add_column :attendances, :previous_scheduled_end_time, :datetime    # 前の終了予定時間
+    add_column :attendances, :previous_overwork_next_day, :boolean      # 前の翌日チェック
+    add_column :attendances, :previous_work_details, :string            # 前の業務処理内容
+    add_column :attendances, :previous_overwork_status, :string         # 前の残業申請の状態
     add_column :attendances, :scheduled_end_time, :datetime             # 終了予定時間
     add_column :attendances, :overwork_next_day, :boolean               # 翌日チェック
     add_column :attendances, :work_details, :string                     # 業務処理内容
-    add_column :attendances, :overwork_request_status, :string          # 残業申請の状態
+    add_column :attendances, :overwork_status, :string                  # 残業申請の状態
     add_column :attendances, :overwork_superior_confirmation, :string   # 残業申請指示者確認
+
     add_column :attendances, :change, :boolean                          # 変更のチェック
   end
 end
