@@ -11,13 +11,13 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
-      if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
+      if @attendance.update_attributes(started_at: Time.current.change(sec: 0), edit_started_at: Time.current.change(sec: 0))
         flash[:info] = "おはようございます！"
       else
         flash[:danger] = UPDATE_ERROR_MSG
       end
     elsif @attendance.finished_at.nil?
-      if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
+      if @attendance.update_attributes(finished_at: Time.current.change(sec: 0), edit_finished_at: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした。"
       else
         flash[:danger] = UPDATE_ERROR_MSG
@@ -143,11 +143,11 @@ class AttendancesController < ApplicationController
             unless attendance.edit_started_at.blank?
               attendance.started_at = attendance.edit_started_at
             end
-            unless attendance.edit_finished_at.blank?
+            unless attendance.edit_started_at.blank? && attendance.edit_finished_at.blank?
               attendance.finished_at = attendance.edit_finished_at
               attendance.next_day = attendance.edit_next_day
             end
-            attendance.previous_note = attendance.note
+            attendance.note = attendance.previous_note
             attendance.previous_edit_status = "否認"
             item[:change] = "0"
             attendance.update_attributes!(item)
@@ -155,11 +155,11 @@ class AttendancesController < ApplicationController
             unless attendance.edit_started_at.blank?
               attendance.started_at = attendance.edit_started_at
             end
-            unless attendance.edit_finished_at.blank?
+            unless attendance.edit_started_at.blank? && attendance.edit_finished_at.blank?
               attendance.finished_at = attendance.edit_finished_at
               attendance.next_day = attendance.edit_next_day
             end
-            item[:note] = attendance.previous_note
+            attendance.note = attendance.previous_note
             item[:edit_status] = attendance.previous_edit_status
             item[:change] = "0"
             attendance.update_attributes!(item)
