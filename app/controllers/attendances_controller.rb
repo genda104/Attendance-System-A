@@ -152,13 +152,26 @@ class AttendancesController < ApplicationController
             item[:change] = "0"
             attendance.update_attributes!(item)
           else                                                  # edit_status == "なし" (承認申請取消)
-            unless attendance.edit_started_at.blank?
+#            unless attendance.edit_started_at.blank?
+#              attendance.started_at = attendance.edit_started_at
+#            end
+#            unless attendance.edit_started_at.blank? && attendance.edit_finished_at.blank?
+#              attendance.finished_at = attendance.edit_finished_at
+#              attendance.next_day = attendance.edit_next_day
+#            end
+
+            if attendance.edit_started_at.blank?
+              attendance.started_at = nil
+            else
               attendance.started_at = attendance.edit_started_at
             end
-            unless attendance.edit_started_at.blank? && attendance.edit_finished_at.blank?
+            if attendance.edit_started_at.blank? || attendance.edit_finished_at.blank?
+              attendance.finished_at = nil
+            else
               attendance.finished_at = attendance.edit_finished_at
               attendance.next_day = attendance.edit_next_day
             end
+
             attendance.note = attendance.previous_note
             item[:edit_status] = attendance.previous_edit_status
             item[:change] = "0"
