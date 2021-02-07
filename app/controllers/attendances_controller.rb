@@ -152,7 +152,7 @@ class AttendancesController < ApplicationController
 #              attendance.next_day = attendance.edit_next_day
 #            end
 #            attendance.note = attendance.previous_note
-            attendance.previous_edit_status = "否認"
+#            attendance.previous_edit_status = "否認"
             item[:change] = "0"
             attendance.update_attributes!(item)
           else                                                  # edit_status == "なし" (承認申請取消)
